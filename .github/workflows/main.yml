@@ -1,0 +1,57 @@
+name: Build GodGear
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check source files
+        run: |
+          test -d src/main/java/com/godgear || { echo "ERROR: src/main/java/com/godgear is missing - upload the src folder"; exit 1; }
+          test -f src/main/resources/plugin.yml || { echo "ERROR: plugin.yml is missing"; exit 1; }
+          echo "Found $(find src -name '*.java' | wc -l) Java files"
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: current
+
+      - name: Generate Gradle Wrapper
+        run: test -f gradle/wrapper/gradle-wrapper.jar || gradle wrapper --no-daemon
+
+      - name: Build
+        run: |
+          chmod +x gradlew
+          ./gradlew build --no-daemon
+
+      - name: Upload plugin jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: GodGear-jar
+          path: build/libs/*.jar
+
+      - name: Upload Gradle wrapper files
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-wrapper-files
+          path: |
+            gradlew
+            gradlew.bat
+            gradle/wrapper/
