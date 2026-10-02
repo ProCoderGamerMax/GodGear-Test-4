@@ -1,0 +1,126 @@
+# ---------------------------------------------------------------- gameplay
+
+# Player heads drop when a player is killed BY another player.
+head-drops: true
+
+# Only PLAYER kills level up god items (every 4 kills = 1 upgrade, 12 kills max).
+
+# After you damage another player, Second Life (chestplate) and Wraith Dash (leggings) are disabled this long.
+combat-tag-seconds: 5
+
+# Anti-farm: the same killer+victim pair only counts once per this many seconds, so an alt
+# can't be killed on repeat to fast-track god gear.
+kill-farm-cooldown-seconds: 120
+
+# Wearing all 4 god armour pieces: extra damage reduction (0.20 = 20%).
+set-bonus-reduction: 0.20
+
+# While Ambrosia is active, god armour's own damage reduction (set bonus + prestige) is multiplied by this,
+# its +10 hearts is suspended and its passive Resistance is skipped - so they only stack a little. 1.0 = full stacking.
+ambrosia-armour-factor: 0.25
+
+# Per-ability cooldown overrides (seconds). Every weapon's [F]/[Shift+F] ability and every
+# proc-based armour ability has its own cooldown. Normal weapon swings use vanilla cooldowns.
+cooldowns:
+  sword_wave: 6
+  sword_storm: 25
+  axe_rage: 30
+  axe_slam: 14
+  mace_wind: 5
+  mace_well: 18
+  mace_stun: 10         # Mace Stunning Blow: seconds before the same target can be stunned again
+  spear_charge: 6
+  spear_volley: 20
+  wraith_dash: 4
+  mirror_aegis: 3       # Chestplate: reflect damage
+  shockwave_landing: 6  # Boots: landing blast
+  phase_shift: 3        # Leggings: dodge a projectile
+  groundswell: 8         # Boots: sprint-start speed burst
+  cheat_death: 900       # Chestplate: Second Life (15 minutes)
+
+# ---------------------------------------------------------------- controls
+
+# Weapon abilities are triggered with the "Swap Item With Offhand" key (F by default) and Shift + that key.
+# Minecraft servers cannot read arbitrary keys like X, so each player rebinds it:
+#   Options > Controls > Key Binds > "Swap Item With Offhand"  ->  X
+# This label is only what the item lore / HUD *shows*. (Restart needed after changing.)
+ability-key-label: "X"
+
+# ---------------------------------------------------------------- smithing table
+
+# vanilla = the real smithing screen (template + gear, leave the 3rd slot empty)
+# custom  = a chest-style GUI (fallback if vanilla mode ever misbehaves on your build)
+smithing-gui: vanilla
+
+# ---------------------------------------------------------------- looks (resource pack)
+
+# Give god items custom models (godgear:god_sword ...). Needs the GodGear resource pack on the client,
+# otherwise they show as missing-texture blocks. Set to false if you don't use the pack. (Restart needed.)
+custom-models: true
+
+# Automatically send the resource pack to players on join.
+resource-pack:
+  enabled: false
+  url: ""      # direct download link to GodGearPack.zip
+  sha1: "fa08dd612abe5cf8f5d8081698f5dbed81264919"  # SHA-1 of the GodGearPack.zip that ships with the plugin
+  force: false
+
+# ---------------------------------------------------------------- spawn protection
+
+# God abilities (weapon [F]/[Shift+F], Second Life, Mirror Aegis, Phase Shift, Shockwave Landing,
+# Wraith Dash) are disabled inside these spheres. Always-on passive buffs (Night Vision, Speed, etc.)
+# still work everywhere. Empty by default - add your own spawn's coordinates:
+#
+# spawn-zones:
+#   - world: "world"
+#     x: 0
+#     y: 64
+#     z: 0
+#     radius: 60
+spawn-zones: []
+
+# ---------------------------------------------------------------- Convergence & The Triarch Singularity
+
+# A player may safely hold this many DISTINCT god items per Convergence level (0 = none yet):
+# level 0 -> 0, level 1 -> 1, level 2 -> 4, level 3 -> 8 (all of them). These four numbers are
+# fixed in code, not configurable, since they define the level-1/2/3 progression itself.
+#
+# Carrying more than your current limit deals "Divine Overload" damage every 5 seconds (bypasses
+# armour entirely - it WILL kill you if ignored) and spawns The Triarch Singularity bound to you,
+# at the stage matching the level you're missing. Defeating it drops a Convergence item (must be
+# right-clicked to take effect) and a vanilla-only loot bundle that gets dramatically better each
+# stage. Difficulty: stage 1 hard, stage 2 very hard, stage 3 (Awakened) extremely hard - tune the
+# numbers below to your server's average gear level. /god boss <player> <1|2|3> force-spawns one
+# for testing; /god boss remove [player] cleans up a stuck one; /god boss list shows active fights.
+triarch:
+  # Divine Overload is NOT applied while a player is actively fighting their guardian. It applies when:
+  #  - they run further than flee-distance blocks from it (or change world), or
+  #  - the guardian hasn't damaged them for idle-lock-seconds. Then it LOCKS ON until the guardian dies or they die.
+  flee-distance: 64
+  idle-lock-seconds: 180
+  # If the Triarch kills the player it is BOUND to (or its Divine Overload does), ALL their items are destroyed
+  # (god items too) and it despawns. Other players it kills in a group fight die normally.
+  destroy-loot-on-kill: true
+  stage1:
+    health: 350
+    damage: 10
+    pulse-damage: 4          # damage of the periodic AoE attack (on top of its own melee)
+    attack-interval-seconds: 7
+    minion-cap: 3
+  stage2:
+    health: 900
+    damage: 16
+    pulse-damage: 6
+    attack-interval-seconds: 5
+    minion-cap: 5
+  stage3:
+    health: 1000             # vanilla caps max health at 1024
+    damage: 22
+    pulse-damage: 8
+    attack-interval-seconds: 4
+    minion-cap: 7            # stage 3 also runs all three elemental pulses every interval at once
+    # Optional: set unbeatable: true to make Awakened impossible (hits capped at max-damage-per-hit, heals regen-per-second).
+    # Default false = extremely hard but beatable.
+    unbeatable: false
+    max-damage-per-hit: 1.0
+    regen-per-second: 40

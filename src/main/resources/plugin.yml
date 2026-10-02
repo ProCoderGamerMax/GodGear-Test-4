@@ -1,0 +1,16 @@
+name: GodGear
+version: '${version}'
+main: com.godgear.GodGear
+api-version: '26.1'
+description: God armour, god weapons, god templates and the God Smithing Table.
+commands:
+  god:
+    description: GodGear command (recipes for everyone, give/reload for admins)
+    usage: /god <recipes|book|status|info>  (admins: give|inspect|test|setconvergence|reset|boss|reload)
+  godrecipes:
+    description: Open the God Recipe Book
+    usage: /godrecipes
+permissions:
+  godgear.admin:
+    description: Use /god give and /god reload
+    default: op
